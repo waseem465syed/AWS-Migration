@@ -121,7 +121,4 @@ techhealth-iac/
 
 ---
 
-## 📞 Contact
 
-Created by: **Cloud Engineer Consultant**  
-For: **TechHealth Inc.**
