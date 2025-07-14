@@ -1,83 +1,127 @@
-# AWS CDK Infrastructure Project (TypeScript)
 
-This project demonstrates a modular infrastructure-as-code (IaC) implementation using the **AWS Cloud Development Kit (CDK)** in **TypeScript**. The stack provisions foundational AWS resources such as **IAM roles**, **EC2 instances**, and **RDS databases**, structured across reusable and isolated stacks for better scalability and maintenance.
+# 🏥 TechHealth Inc. AWS Infrastructure Modernization
 
----
-
-## 🏗️ Project Architecture
-
-The CDK application is divided into the following modular stacks:
-
-### 1. `IamStack`
-- Creates IAM roles and policies.
-- Ensures secure and principle-of-least-privilege permissions for compute resources.
-
-### 2. `Ec2Stack`
-- Provisions Amazon EC2 instances within a defined VPC and security group.
-- Installs basic software using user data scripts.
-
-### 3. `RdsStack`
-- Creates an Amazon RDS instance (e.g., MySQL or PostgreSQL).
-- Secure connection enabled using security groups and credentials managed via CDK.
-
-### 4. `CdkProjectStack`
-- The main stack that orchestrates deployment and integrates sub-stacks.
-- Deployed from the `bin/cdk-project.ts` entry point.
+This repository contains a complete AWS Infrastructure-as-Code (IaC) solution using AWS CDK (TypeScript) to migrate TechHealth Inc.’s legacy, console-created infrastructure into a secure, scalable, and repeatable cloud environment.
 
 ---
 
-## 📁 Project Structure
+## 📌 Project Overview
 
-```text
-.
-├── bin/
-│   └── cdk-project.ts        # Entry point of the CDK application
+**Client:** TechHealth Inc.  
+**Objective:** Modernize a manually-built AWS infrastructure by adopting best practices using AWS CDK and CI/CD for version control, automation, and security.  
+
+---
+
+## 📐 Target Architecture
+
+- **VPC** with proper public/private subnet separation
+- **EC2 instance** in a **public subnet**
+- **RDS MySQL** database in a **private subnet**
+- **IAM Roles** for EC2 instance access via SSM
+- **Security Groups** following least-privilege principles
+- **Secrets** securely managed (e.g., using AWS Secrets Manager)
+
+📶 **Network Flow**:
+```
+[Admin IP] → [EC2 in Public Subnet] → [RDS in Private Subnet]
+```
+
+---
+
+## 🧱 CDK Stack Breakdown
+
+| Stack File           | Responsibility                             |
+|----------------------|---------------------------------------------|
+| `cdk-project-stacks.ts` | VPC + Subnets + Network segmentation       |
+| `iam-stack.ts`          | IAM roles & policies for EC2 access        |
+| `ec2-stack.ts`          | EC2 instance + Security Group              |
+| `rds-stack.ts`          | RDS MySQL instance + Security Group        |
+
+---
+
+## 📂 Project Structure
+
+```
+techhealth-iac/
 ├── lib/
-│   ├── cdk-project-stack.ts  # Main orchestration stack
-│   ├── ec2-stack.ts          # EC2 resource definitions
-│   ├── iam-stack.ts          # IAM roles and policies
-│   └── rds-stack.ts          # RDS database setup
-├── cdk.json
+│   ├── cdk-project-stacks.ts      # VPC & Network
+│   ├── iam-stack.ts               # IAM roles
+│   ├── ec2-stack.ts               # EC2 instance
+│   └── rds-stack.ts               # RDS DB
+├── bin/
+│   └── main.ts                    # CDK app entry point
+├── .gitignore
 ├── package.json
-├── tsconfig.json
-└── README.md
+├── cdk.json
+└── README.md                      # Project documentation
+```
 
-🚀 Deployment Instructions
-1. Prerequisites
+---
 
-Ensure the following are installed:
+## 🚀 Deployment Steps
 
-    Node.js (v14+)
+1. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-    AWS CDK CLI
+2. **Bootstrap your AWS environment (once per environment)**
+   ```bash
+   cdk bootstrap
+   ```
 
-    AWS CLI with valid credentials
+3. **Deploy all stacks**
+   ```bash
+   cdk deploy
+   ```
 
-2. Install Dependencies
+4. **Destroy stacks (to avoid charges)**
+   ```bash
+   cdk destroy
+   ```
 
-npm install
+---
 
-3. Bootstrap the CDK (if not done previously)
+## ✅ Success Criteria
 
-cdk bootstrap
+- ✔️ Infrastructure is version-controlled
+- ✔️ EC2 can SSH via specific admin IP
+- ✔️ EC2 successfully connects to RDS
+- ✔️ RDS is not publicly accessible
+- ✔️ IAM roles provide only needed permissions
+- ✔️ Network follows least-privilege access model
 
-4. Deploy the Stack
+---
 
-cdk deploy
+## 🛡️ AWS Best Practices Applied
 
-🛠️ Useful CDK Commands
+- Network segregation with public/private subnets
+- No public access to RDS
+- IAM Roles for EC2 (not hard-coded credentials)
+- Secrets securely generated and stored
+- Cost-optimized with Free Tier instances (`t2.micro`, `db.t3.micro`)
+- Destruction/redeployment tested for consistency
 
-cdk synth      # Synthesizes the CloudFormation template
-cdk deploy     # Deploys the app to AWS
-cdk destroy    # Deletes the deployed resources
-cdk diff       # Shows diff between deployed and local changes
+---
 
-📌 Best Practices Demonstrated
+## 📘 Documentation
 
-    Modular design using separate stacks for IAM, EC2, and RDS
+- [x] Architecture diagram (local or Lucidchart)
+- [x] README.md
+- [x] Inline code comments
+- [x] Setup and deployment guide
 
-    Secure IAM role creation with scoped permissions
+---
 
-    Separation of concerns for scalable cloud architecture
+## 🔒 Security Notes
 
-    Use of constructs and stack composition for code reuse
+- SSH is restricted to admin IP (`your-ip/32`)
+- RDS MySQL only accepts traffic from EC2 SG
+- IAM Role includes **AmazonSSMManagedInstanceCore** for SSM Session Manager (no key-pair login)
+
+---
+
+## 📞 Contact
+
+Created by: **Cloud Engineer Consultant**  
+For: **TechHealth Inc.**
