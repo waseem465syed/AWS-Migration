@@ -10,7 +10,7 @@ export class CdkProjectStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: cdk.StackProps) {
     super(scope, id, props);
 
-    this.vpc = new ec2.Vpc(this, 'MyVpc', {
+    this.vpc = new ec2.Vpc(this, 'TechHealthVpc', {
       maxAzs: 2,
       subnetConfiguration: [
         {
@@ -20,7 +20,7 @@ export class CdkProjectStack extends cdk.Stack {
         },
         {
           name: 'PrivateSubnet',
-          subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
+          subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
           cidrMask: 24,
         },
       ],
